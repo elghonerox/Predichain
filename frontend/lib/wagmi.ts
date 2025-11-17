@@ -1,20 +1,20 @@
-import { getDefaultConfig } from '@web3modal/wagmi'
+import { defaultWagmiConfig } from '@web3modal/wagmi'
 import { bsc, bscTestnet } from 'wagmi/chains'
 
 // Get projectId from https://cloud.reown.com
-export const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || ''
+export const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '0893b6579e0a17ca509b1e6e231e8240'
 
-if (!projectId) {
-  throw new Error('Project ID is not set. Please set NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID in your .env file')
+const metadata = {
+  name: 'PrediChain',
+  description: 'Fast-Resolution Prediction Markets with Gasless UX on BNB Chain',
+  url: 'https://predichain.xyz',
+  icons: ['https://predichain.xyz/logo.png']
 }
 
-export const config = getDefaultConfig({
+export const config = defaultWagmiConfig({
   chains: [bscTestnet, bsc], // BNB Chain testnet and mainnet
   projectId,
-  appName: 'PrediChain',
-  appDescription: 'Fast-Resolution Prediction Markets with Gasless UX on BNB Chain',
-  appUrl: 'https://predichain.xyz',
-  appIcon: 'https://predichain.xyz/logo.png',
+  metadata,
 })
 
 // BNB Chain configuration
@@ -40,4 +40,3 @@ export const bscTestnetConfig = {
   },
   testnet: true,
 }
-
