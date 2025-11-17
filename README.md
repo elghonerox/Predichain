@@ -50,6 +50,21 @@ BNB Chain offers unique advantages for prediction markets:
 - **Real-Time Updates**: Live market data and position tracking
 - **Fee Collection**: 2% trading fee automatically collected
 
+  ## 🌐 Live Demo
+
+- **Frontend**: https://predichain-3ioehcnrh-hamzas-projects-2a3d5002.vercel.app
+- **Demo Video**: [YouTube link - to be added]
+
+## 📝 Deployed Contracts (BNB Chain Testnet)
+
+| Contract             | Address                                      | BSCScan                                                                                           |
+|----------------------|----------------------------------------------|---------------------------------------------------------------------------------------------------|
+| **PredictionMarket** | `0xb1C705cf1c065577ddC773C52319d4d24CDbb1BE` | [View on BSCScan](https://testnet.bscscan.com/address/0xb1C705cf1c065577ddC773C52319d4d24CDbb1BE) |
+| **OracleAdapter**    | `0x6a9F9D5Cc268C118cCDAA4D353026A069a4F8ECD` | [View on BSCScan](https://testnet.bscscan.com/address/0x6a9F9D5Cc268C118cCDAA4D353026A069a4F8ECD) |
+| **Treasury**         | `0x7B1AEc850e98Cc619f463815714B0A6cd69D3299` | [View on BSCScan](https://testnet.bscscan.com/address/0x7B1AEc850e98Cc619f463815714B0A6cd69D3299) |
+
+**Network:** BNB Smart Chain Testnet (Chain ID: 97)
+
 ## 🏗️ Tech Stack
 
 - **Blockchain**: BNB Smart Chain (BSC)
@@ -67,6 +82,7 @@ BNB Chain offers unique advantages for prediction markets:
 - **Demo Video**: [YouTube/Loom link - MAX 5 MIN]
 
 ---
+
 
 ## 🚀 Quick Start
 
