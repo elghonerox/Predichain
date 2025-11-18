@@ -3,32 +3,28 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: 'standalone',
   
-  // Exclude problematic test files and dependencies
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-      };
-    }
+  webpack: (config) => {
+    // Polyfills for browser
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+      crypto: false,
+    };
     
-    // Exclude test files from being bundled
+    // Ignore test files from dependencies
     config.module.rules.push({
-      test: /node_modules\/thread-stream\/test\//,
-      use: 'ignore-loader',
+      test: /node_modules[\\/]thread-stream[\\/]test[\\/]/,
+      loader: 'ignore-loader',
     });
     
     return config;
   },
   
-  // Exclude test files from being processed
-  transpilePackages: ['@web3modal/wagmi', '@walletconnect'],
-  
-  // Ignore specific patterns during build
+  // External packages for server components
   experimental: {
-    serverComponentsExternalPackages: ['pino', 'thread-stream'],
+    serverComponentsExternalPackages: ['pino', 'pino-pretty', 'thread-stream'],
   },
 };
 
