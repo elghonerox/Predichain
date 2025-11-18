@@ -1,94 +1,63 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Explicitly disable turbopack for production builds
-  experimental: {
-    turbo: {
-      rules: {
-        '*.test.{js,jsx,ts,tsx,mjs}': {
-          loaders: [],
-          as: '*.js',
-        },
-        '*.spec.{js,jsx,ts,tsx,mjs}': {
-          loaders: [],
-          as: '*.js',
-        },
-      },
-      resolveAlias: {
-        'thread-stream/test': false,
-        'thread-stream/bench': false,
-      },
-    },
-  },
-
+  // Remove all turbopack configuration entirely
+  // Use standard webpack instead
+  
   webpack: (config, { isServer, webpack }) => {
-    // Exclude test files and problematic modules from bundling
-    config.module = config.module || {};
-    config.module.rules = config.module.rules || [];
-    
-    // Ignore test files
-    config.module.rules.push({
-      test: /\.(test|spec|bench)\.(js|ts|mjs)$/,
-      use: 'null-loader',
-    });
-    
-    // Ignore thread-stream test and bench directories
-    config.module.rules.push({
-      test: /node_modules\/thread-stream\/(test|bench)/,
-      use: 'null-loader',
-    });
+    // Ignore problematic modules and test files
+    config.plugins.push(
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^\.\/test$/,
+        contextRegExp: /thread-stream$/
+      })
+    );
 
-    // Ignore specific file types that cause issues
-    config.module.rules.push({
-      test: /\.(md|sh|zip|LICENSE)$/,
-      use: 'null-loader',
-    });
-
-    // Add fallbacks for Node.js modules
-    if (!isServer) {
-      config.resolve = config.resolve || {};
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-        crypto: false,
-        stream: false,
-        http: false,
-        https: false,
-        zlib: false,
-        path: false,
-        os: false,
-        child_process: false,
-        worker_threads: false,
-      };
-    }
-
-    // Ignore specific problematic modules
     config.plugins.push(
       new webpack.IgnorePlugin({
         resourceRegExp: /^(pino|tap|tape|fastbench|desm|why-is-node-running|pino-elasticsearch)$/,
       })
     );
 
-    // Additional ignore for thread-stream internals
-    config.plugins.push(
-      new webpack.IgnorePlugin({
-        resourceRegExp: /thread-stream\/(test|bench)/,
-      })
-    );
+    // Handle specific file extensions that cause issues
+    config.module.rules.push({
+      test: /node_modules[\\/]thread-stream[\\/].*\.(test|spec|bench)\.(js|ts|mjs)$/,
+      use: 'ignore-loader'
+    });
+
+    config.module.rules.push({
+      test: /\.(md|sh|zip|yml)$/,
+      use: 'ignore-loader'
+    });
+
+    // Node.js module fallbacks for client-side
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: require.resolve('crypto-browserify'),
+        stream: require.resolve('stream-browserify'),
+        http: require.resolve('stream-http'),
+        https: require.resolve('https-browserify'),
+        zlib: require.resolve('browserify-zlib'),
+        path: require.resolve('path-browserify'),
+        os: require.resolve('os-browserify/browser'),
+      };
+    }
 
     return config;
   },
 
-  // Explicitly ignore these paths during build
-  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
-  
-  // Optimize for production
+  // Remove turbopack-related configurations
   swcMinify: true,
-  
-  // Output standalone for better Vercel deployment
   output: 'standalone',
+  
+  // Add compiler optimization
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
 };
 
 export default nextConfig;
