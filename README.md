@@ -253,7 +253,7 @@ npm test
 
 I’m a passionate Web3 builder with a strong interest in decentralized finance and cross-chain infrastructure. My background includes exploring and experimenting with DeFi protocol design, understanding how Layer 2 scaling solutions improve blockchain performance, and studying zero-knowledge proofs for secure and privacy-preserving applications. I also enjoy analyzing tokenomics models, especially those designed for emerging markets, where incentives and accessibility matter most. Beyond infrastructure, I’m deeply interested in blockchain gaming and the potential of on-chain economies.
 
-Even though I am solo builder for this project, I am open minded to collaboration, learn continuousling from mentors, and focus on creating practical, user-centered products. My motivation comes from solving real problems with decentralized technology and pushing the boundaries of what’s possible in Web3.
+Even though I am solo builder for this project, I am open minded to collaboration, learning from mentors. My motivation comes from solving real problems with decentralized technology and pushing the boundaries of what’s possible in Web3.
 
 ---
 
