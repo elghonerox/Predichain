@@ -75,9 +75,6 @@ BNB Chain offers unique advantages for prediction markets:
 - **Account Abstraction**: Plena Finance (gasless transactions)
 - **Styling**: Tailwind CSS
 
-
-- **Demo Video**: https://youtu.be/BDy5iViN8V0
-
 ---
 
 
