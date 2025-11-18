@@ -1,10 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    // Disable turbopack for now, use webpack
-    turbo: undefined,
-  },
+  // Force webpack mode (disable Turbopack)
+  turbopack: false as any,
+  
   webpack: (config, { isServer }) => {
     // Exclude test files and problematic modules
     config.module = config.module || {};
