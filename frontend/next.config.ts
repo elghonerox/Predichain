@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Add empty turbopack config to acknowledge we're using webpack
+  turbopack: {},
+  
   webpack: (config, { isServer, webpack }) => {
     // Exclude test files and problematic modules from bundling
     config.module = config.module || {};
