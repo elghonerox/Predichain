@@ -52,7 +52,7 @@ BNB Chain offers unique advantages for prediction markets:
 
   ## 🌐 Live Demo
 
-- **Frontend**: https://predichain-d24bv3yvd-hamzas-projects-2a3d5002.vercel.app/
+- **Frontend**: https://predichain.vercel.app/
 - **Demo Video**: https://youtu.be/BDy5iViN8V0
 
 ## 📝 Deployed Contracts (BNB Chain Testnet)
