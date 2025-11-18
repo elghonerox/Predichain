@@ -53,7 +53,7 @@ BNB Chain offers unique advantages for prediction markets:
   ## 🌐 Live Demo
 
 - **Frontend**: https://predichain-3ioehcnrh-hamzas-projects-2a3d5002.vercel.app
-- **Demo Video**: [YouTube link - to be added]
+- **Demo Video**: https://youtu.be/BDy5iViN8V0
 
 ## 📝 Deployed Contracts (BNB Chain Testnet)
 
@@ -75,11 +75,8 @@ BNB Chain offers unique advantages for prediction markets:
 - **Account Abstraction**: Plena Finance (gasless transactions)
 - **Styling**: Tailwind CSS
 
-## 🌐 Live Demo
 
-- **Frontend**: [Deploy to Vercel/Netlify]
-- **Smart Contracts**: [BSCScan testnet links - update after deployment]
-- **Demo Video**: [YouTube/Loom link - MAX 5 MIN]
+- **Demo Video**: https://youtu.be/BDy5iViN8V0
 
 ---
 
@@ -252,13 +249,11 @@ npm test
 
 ---
 
-## 👥 Team
+**Team Info:**
 
-**[Your Name/Team Name]**
-- Background: [Your background]
-- Relevant experience: Web3 development, BNB Chain, prediction markets
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Twitter: [@yourhandle](https://twitter.com/yourhandle)
+I’m a passionate Web3 builder with a strong interest in decentralized finance and cross-chain infrastructure. My background includes exploring and experimenting with DeFi protocol design, understanding how Layer 2 scaling solutions improve blockchain performance, and studying zero-knowledge proofs for secure and privacy-preserving applications. I also enjoy analyzing tokenomics models, especially those designed for emerging markets, where incentives and accessibility matter most. Beyond infrastructure, I’m deeply interested in blockchain gaming and the potential of on-chain economies.
+
+Even though I am solo builder for this project, I am open minded to collaboration, learn continuousling from mentors, and focus on creating practical, user-centered products. My motivation comes from solving real problems with decentralized technology and pushing the boundaries of what’s possible in Web3.
 
 ---
 
@@ -277,25 +272,11 @@ npm test
 
 MIT License - See LICENSE file for details
 
----
-
-## 📞 Contact
-
-- Email: [email]
-- Twitter: [@handle]
-- Telegram: [@handle]
 
 ---
 
 ## 🏆 Hackathon Submission Requirements
 
-### ✅ Mandatory Requirements Met
-
-- [x] **Public GitHub repository** with comprehensive README
-- [x] **Working Web3 dApp on BNB Chain Testnet**
-- [x] **Demo video (3-5 minutes)** - [Link to be added]
-- [x] **Project description (150 words)** - See below
-- [x] **Team info (150 words)** - See below
 
 ### 🔥 Key Differentiators
 
@@ -314,13 +295,8 @@ MIT License - See LICENSE file for details
 
 ---
 
-## Project Description (150 words)
+## Project Description
 
 PrediChain solves two critical barriers preventing prediction market adoption: slow resolution (24-48 hours) and complex UX (gas fees). Our platform leverages BNB Chain's Redstone oracle partnership for fast resolution (minutes/hours) and account abstraction for gasless transactions. Focused on crypto price predictions, PrediChain offers a mobile-first experience with real-time updates. Revenue model: 2% trading fees plus $9.99/month premium subscriptions. We target crypto traders seeking fast outcomes and casual users deterred by gas fees. BNB Chain's low fees ($0.03), fast finality (3s), and oracle partnerships make it ideal for prediction markets. Projected Year 1 revenue: $100K-500K with 1,000 active users. Post-hackathon: mainnet deployment, automated oracle integration, token launch, and expansion to sports/politics markets.
 
 ---
-
-## Team Info (150 words)
-
-[To be filled with actual team information]
-
