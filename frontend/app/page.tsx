@@ -50,7 +50,8 @@ export default function Home() {
             functionName: 'getMarket',
             args: [BigInt(i)],
           })
-          marketArray.push({ id: i, ...market })
+          // Don't add duplicate id - market already has an id property
+          marketArray.push(market)
         } catch (e) {
           // Market doesn't exist
         }
@@ -201,7 +202,7 @@ export default function Home() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {markets.map((market) => (
-                    <MarketCard key={market.id} market={market} />
+                    <MarketCard key={Number(market.id)} market={market} />
                   ))}
                 </div>
               )}
