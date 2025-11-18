@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.9",
@@ -16,7 +16,14 @@
     "react-dom": "19.2.0",
     "recharts": "^3.4.1",
     "viem": "^2.39.0",
-    "wagmi": "^2.19.4"
+    "wagmi": "^2.19.4",
+    "crypto-browserify": "^3.12.0",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "https-browserify": "^1.0.0",
+    "browserify-zlib": "^0.2.0",
+    "path-browserify": "^1.0.1",
+    "os-browserify": "^0.3.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -25,7 +32,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.3",
-    "null-loader": "^4.0.1",
+    "ignore-loader": "^0.1.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
