@@ -1,0 +1,20 @@
+{
+  "network": "bscTestnet",
+  "chainId": "97",
+  "deployer": "0x52B29d188953dCb1F563f02697311811F23B767b",
+  "timestamp": "2025-11-22T00:51:44.783Z",
+  "contracts": {
+    "OracleAdapter": {
+      "address": "0x27c524BEFC7b14C0Edae2F9979227e2911BFdc0E",
+      "deploymentTx": "0x26c08a809274dc0f450c065e0bde799ecff5aeca7ff55ace7eccfb5fa81ee6f8"
+    },
+    "Treasury": {
+      "address": "0x095aa661AdF5eD7548DF979539cbCF25145AB1A0",
+      "deploymentTx": "0xc325e946aa9e260b3c8c90303bc79f44fabc2c7a1181a71759269351c38bf9e9"
+    },
+    "PredictionMarket": {
+      "address": "0xb174f4B30e799c683331CA7815C074BB234153A7",
+      "deploymentTx": "0x83d2b2cef31e43bda0068c8ba869d592bfec516d68bba38a4bbbf0b296b207b8"
+    }
+  }
+}

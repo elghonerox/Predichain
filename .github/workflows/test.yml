@@ -1,0 +1,60 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run Solidity linter
+      run: npx solhint 'contracts/**/*.sol'
+      
+    - name: Compile contracts
+      run: npx hardhat compile
+      
+    - name: Run tests
+      run: npx hardhat test
+      
+    - name: Generate coverage report
+      run: npx hardhat coverage
+      
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+        
+    - name: Run gas reporter
+      run: REPORT_GAS=true npx hardhat test
+      
+    - name: Comment PR with gas report
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const gasReport = fs.readFileSync('gas-report.txt', 'utf8');
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `## ⛽ Gas Report\n\`\`\`\n${gasReport}\n\`\`\``
+          });

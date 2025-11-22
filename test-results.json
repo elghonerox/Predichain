@@ -1,0 +1,32 @@
+﻿node.exe : [31m[1mE
+rror[22m[39m [31m
+[1mHH305:[22m[39m 
+Unrecognized param 
+--reporter
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: ([31m[   
+ 1mError...aram     
+--reporter:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+
+For more info go to h
+ttps://v2.hardhat.org
+/HH305 or run 
+Hardhat with 
+--show-stack-traces

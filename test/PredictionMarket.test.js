@@ -1,5 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
+const { time } = require("@nomicfoundation/hardhat-network-helpers");
 
 describe("PrediChain Contracts", function () {
   let oracleAdapter, treasury, predictionMarket;
@@ -21,11 +22,12 @@ describe("PrediChain Contracts", function () {
 
     // Deploy PredictionMarket
     const PredictionMarket = await ethers.getContractFactory("PredictionMarket");
-    predictionMarket = await PredictionMarket.deploy(
+    predictionMarket = await PredictionMarket.deploy();
+    await predictionMarket.waitForDeployment();
+    await predictionMarket.initialize(
       await oracleAdapter.getAddress(),
       await treasury.getAddress()
     );
-    await predictionMarket.waitForDeployment();
 
     // Update oracle with test price
     await oracleAdapter.updatePrice("BTC", ethers.parseEther("50000")); // $50,000
@@ -63,7 +65,7 @@ describe("PrediChain Contracts", function () {
     it("Should reject invalid market creation", async function () {
       await expect(
         predictionMarket.createMarket("", "BTC", ethers.parseEther("100000"), Math.floor(Date.now() / 1000) + 86400)
-      ).to.be.revertedWith("PredictionMarket: Invalid question");
+      ).to.be.revertedWith("Question cannot be empty");
 
       await expect(
         predictionMarket.createMarket(
@@ -72,7 +74,7 @@ describe("PrediChain Contracts", function () {
           ethers.parseEther("100000"),
           Math.floor(Date.now() / 1000) - 86400 // Past time
         )
-      ).to.be.revertedWith("PredictionMarket: Invalid resolution time");
+      ).to.be.revertedWith("Resolution time must be future");
     });
   });
 
@@ -113,25 +115,24 @@ describe("PrediChain Contracts", function () {
     });
 
     it("Should reject trading on expired markets", async function () {
-      // Create market with near-future resolution time (5 seconds from now)
-      const blockNumber = await ethers.provider.getBlockNumber();
-      const block = await ethers.provider.getBlock(blockNumber);
-      const nearFutureTime = block.timestamp + 5; // 5 seconds from current block
-      
+      // Create market with minimum duration + 1 second
+      const latestTime = await time.latest();
+      const resolutionTime = latestTime + 3601; // 1 hour + 1 second
+
       const tx = await predictionMarket.createMarket(
         "Expired Market",
         "BTC",
         ethers.parseEther("100000"),
-        nearFutureTime
+        resolutionTime
       );
       await tx.wait();
 
-      // Wait for market to expire (6 seconds)
-      await new Promise((resolve) => setTimeout(resolve, 6000));
+      // Fast forward past resolution time
+      await time.increaseTo(resolutionTime + 1);
 
       await expect(
         predictionMarket.connect(user1).buyPosition(2, true, { value: ethers.parseEther("0.1") })
-      ).to.be.revertedWith("PredictionMarket: Market expired");
+      ).to.be.revertedWith("Market expired");
     });
   });
 
@@ -149,14 +150,13 @@ describe("PrediChain Contracts", function () {
     });
 
     it("Should resolve market with oracle price", async function () {
-      // Set BTC price to $110,000 (above target)
-      await oracleAdapter.updatePrice("BTC", ethers.parseEther("110000"));
+      // Set initial price
+      await oracleAdapter.updatePrice("BTC", ethers.parseEther("50000"));
 
-      // Create market with near-future resolution time (5 seconds from now)
-      const blockNumber = await ethers.provider.getBlockNumber();
-      const block = await ethers.provider.getBlock(blockNumber);
-      const resolutionTime = block.timestamp + 5; // 5 seconds from current block
-      
+      // Create market with future resolution time (48 hours to avoid duration too short error)
+      const latestTime = await time.latest();
+      const resolutionTime = latestTime + 172800;
+
       const tx = await predictionMarket.createMarket(
         "Test Market",
         "BTC",
@@ -164,17 +164,34 @@ describe("PrediChain Contracts", function () {
         resolutionTime
       );
       await tx.wait();
+      const marketId = 2;
 
-      // Wait for resolution time to pass (6 seconds)
-      await new Promise((resolve) => setTimeout(resolve, 6000));
+      // Move to 1 hour before resolution to start building TWAP
+      await time.increaseTo(resolutionTime - 3600);
 
+      // Build TWAP history within the relevant window
+      const highPrice = ethers.parseEther("110000");
+
+      // Reset circuit breaker if needed
+      if (await oracleAdapter.circuitBreakerActive()) {
+        await oracleAdapter.resetCircuitBreaker();
+      }
+
+      // Add price points over the last hour
+      // Use batchUpdatePrices to bypass deviation check for large jump
+      for (let i = 0; i < 5; i++) {
+        await time.increase(720); // 12 mins
+        await oracleAdapter.batchUpdatePrices(["BTC"], [highPrice]);
+      }
+
+      // We are now at resolutionTime.
       // Resolve market
-      await expect(predictionMarket.resolveMarket(2)).to.emit(
+      await expect(predictionMarket.resolveMarket(marketId)).to.emit(
         predictionMarket,
         "MarketResolved"
       );
 
-      const market = await predictionMarket.getMarket(2);
+      const market = await predictionMarket.getMarket(marketId);
       expect(market.status).to.equal(1); // Resolved
       expect(market.outcome).to.be.true; // Price > target
     });
@@ -183,7 +200,7 @@ describe("PrediChain Contracts", function () {
   describe("Treasury", function () {
     it("Should collect fees", async function () {
       const feeAmount = ethers.parseEther("0.01");
-      
+
       // Send fee to treasury
       await owner.sendTransaction({
         to: await treasury.getAddress(),
@@ -197,4 +214,3 @@ describe("PrediChain Contracts", function () {
     });
   });
 });
-
