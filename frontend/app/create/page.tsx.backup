@@ -9,25 +9,10 @@ import { PREDICTION_MARKET_ABI, PREDICTION_MARKET_ADDRESS } from '@/lib/contract
 import { formatEther } from 'viem'
 import Link from 'next/link'
 
-interface Market {
-  id: bigint
-  question: string
-  asset: string
-  targetPrice: bigint
-  resolutionTime: bigint
-  creator: string
-  status: number
-  totalVolume: bigint
-  yesVolume: bigint
-  noVolume: bigint
-  resolutionPrice: bigint
-  outcome: boolean
-}
-
 export default function Home() {
   const { address, isConnected } = useAccount()
   const { open } = useWeb3Modal()
-  const [markets, setMarkets] = useState<Market[]>([])
+  const [markets, setMarkets] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [mounted, setMounted] = useState(false)
 
@@ -65,8 +50,8 @@ export default function Home() {
             functionName: 'getMarket',
             args: [BigInt(i)],
           })
-          marketArray.push(market)
-        } catch {
+          marketArray.push({ id: i, ...market })
+        } catch (e) {
           // Market doesn't exist
         }
       }
@@ -100,7 +85,7 @@ export default function Home() {
                 <p className="text-xs text-purple-300">Powered by BNB Chain</p>
               </div>
             </div>
-
+            
             <div className="flex gap-3 items-center">
               {mounted && isConnected && (
                 <Link
@@ -275,17 +260,18 @@ export default function Home() {
   )
 }
 
-function MarketCard({ market }: { market: Market }) {
+function MarketCard({ market }: { market: any }) {
   const statusLabels = ['Active', 'Resolved', 'Cancelled']
   const status = statusLabels[market.status] || 'Unknown'
 
   return (
     <div className="group bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 hover:bg-white/15 transition hover:scale-105 hover:shadow-2xl">
       <div className="flex justify-between items-start mb-4">
-        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${market.status === 0 ? 'bg-green-400/20 text-green-300 border border-green-400/30' :
+        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+          market.status === 0 ? 'bg-green-400/20 text-green-300 border border-green-400/30' :
           market.status === 1 ? 'bg-blue-400/20 text-blue-300 border border-blue-400/30' :
-            'bg-gray-400/20 text-gray-300 border border-gray-400/30'
-          }`}>
+          'bg-gray-400/20 text-gray-300 border border-gray-400/30'
+        }`}>
           {status}
         </span>
         <div className="text-2xl">🎯</div>
@@ -344,4 +330,3 @@ function FeatureCard({ icon, title, description, gradient }: { icon: string, tit
     </div>
   )
 }
-

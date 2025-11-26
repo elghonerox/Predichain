@@ -1,7 +1,7 @@
 'use client'
 
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { PREDICTION_MARKET_ABI, PREDICTION_MARKET_ADDRESS } from '@/lib/contracts'
 import { parseEther } from 'viem'
 import { useRouter } from 'next/navigation'
@@ -15,6 +15,12 @@ export default function CreateMarket() {
   const [targetPrice, setTargetPrice] = useState('')
   const [resolutionTime, setResolutionTime] = useState('')
   const [loading, setLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Fix hydration error by only rendering after mount
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const { writeContract, data: hash, isPending } = useWriteContract()
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
@@ -43,8 +49,22 @@ export default function CreateMarket() {
     }
   }
 
-  if (isSuccess) {
-    setTimeout(() => router.push('/'), 2000)
+  useEffect(() => {
+    if (isSuccess) {
+      const timeout = setTimeout(() => router.push('/'), 2000)
+      return () => clearTimeout(timeout)
+    }
+  }, [isSuccess, router])
+
+  // Don't render anything until mounted to avoid hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center">
+        <div className="relative z-10 text-center">
+          <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+        </div>
+      </div>
+    )
   }
 
   if (!isConnected) {
@@ -91,7 +111,7 @@ export default function CreateMarket() {
                 <p className="text-xs text-purple-300">Powered by BNB Chain</p>
               </div>
             </Link>
-            
+
             <div className="px-4 py-2 bg-white/10 backdrop-blur-lg rounded-lg border border-white/20">
               <p className="text-xs text-purple-300">Connected</p>
               <p className="text-sm text-white font-mono">{address?.slice(0, 6)}...{address?.slice(-4)}</p>
@@ -103,7 +123,7 @@ export default function CreateMarket() {
           <div className="max-w-3xl mx-auto">
             {/* Header */}
             <div className="text-center mb-8">
-              <Link 
+              <Link
                 href="/"
                 className="inline-flex items-center text-purple-300 hover:text-white mb-6 transition"
               >
@@ -122,7 +142,7 @@ export default function CreateMarket() {
               {/* Question */}
               <div>
                 <label className="block text-sm font-semibold text-white mb-2">
-                  Market Question 
+                  Market Question
                   <span className="text-pink-400 ml-1">*</span>
                 </label>
                 <input
@@ -178,7 +198,7 @@ export default function CreateMarket() {
                     required
                   />
                 </div>
-                <p className="text-xs text-purple-400 mt-1">The price point you're predicting</p>
+                <p className="text-xs text-purple-400 mt-1">The price point you&apos;re predicting</p>
               </div>
 
               {/* Resolution Time */}
@@ -204,7 +224,7 @@ export default function CreateMarket() {
                   <div>
                     <h4 className="text-white font-semibold mb-1">Market Creation</h4>
                     <p className="text-sm text-purple-300">
-                      Creating a market is free. You'll earn 20% of trading fees from your market. 
+                      Creating a market is free. You&apos;ll earn 20% of trading fees from your market.
                       Markets resolve automatically using Redstone oracle.
                     </p>
                   </div>
