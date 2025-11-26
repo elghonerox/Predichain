@@ -1,7 +1,7 @@
 # PrediChain - Decentralized Prediction Markets on BNB Chain
 
-[![Tests](https://github.com/yourusername/predichain/actions/workflows/test.yml/badge.svg)](https://github.com/yourusername/predichain/actions/workflows/test.yml)
-[![Coverage](https://codecov.io/gh/yourusername/predichain/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/predichain)
+[![Tests](https://github.com/elghonerox/predichain/actions/workflows/test.yml/badge.svg)](https://github.com/elghonerox/predichain/actions/workflows/test.yml)
+[![Coverage](https://codecov.io/gh/elghonerox/predichain/branch/main/graph/badge.svg)](https://codecov.io/gh/elghonerox/predichain)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **PrediChain** is a decentralized prediction market platform built on BNB Chain, enabling users to create and trade on crypto price predictions with institutional-grade security and gasless UX.
@@ -153,7 +153,7 @@ See [SECURITY.md](./SECURITY.md) for details.
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read our [Contributing Guidelines](./CONTRIBUTING.md) first.
+Contributions are welcome!.
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -167,24 +167,6 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ## 🔗 Links
 
-- **Website**: https://predichain.io
 - **Demo**: https://predichain.vercel.app
-- **Twitter**: [@PrediChain](https://twitter.com/predichain)
-- **Discord**: [Join our community](https://discord.gg/predichain)
-- **Documentation**: [docs.predichain.io](https://docs.predichain.io)
-
-## 💰 Funding & Partnerships
-
-- **Seedify Launchpad**: Primary IDO partner
-- **BNB Chain**: Ecosystem grant recipient
-- **Redstone Finance**: Oracle integration partner
-
-## 📧 Contact
-
-- **General**: contact@predichain.io
-- **Security**: security@predichain.io
-- **Business**: partnerships@predichain.io
-
----
-
-**Built with ❤️ by the PrediChain Team**
+- **X**: [@PrediChain](https://x.com/predichain)
+- **Discord**: [Join our community](https://discord.gg/predichai
