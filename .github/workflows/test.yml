@@ -16,6 +16,11 @@ jobs:
   # ============================================================================
   smart-contracts:
     runs-on: ubuntu-latest
+    env:
+  PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+  BSC_TESTNET_RPC: ${{ secrets.BSC_TESTNET_RPC }}
+  BSCSCAN_API_KEY: ${{ UG5FKCRDHIA674FU9QTVV3P9W6STCH1UUK }}
+  
     timeout-minutes: 15
     
     steps:
