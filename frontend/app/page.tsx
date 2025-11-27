@@ -30,23 +30,26 @@ export default function Home() {
   const { open } = useWeb3Modal()
   const [markets, setMarkets] = useState<Market[]>([])
   const [loading, setLoading] = useState(true)
-  const [mounted, setMounted] = useState(false)
+  
+  // ============================================================================
+  // HYDRATION FIX: Use CSS-based hiding instead of conditional rendering
+  // ============================================================================
+  const [isClient, setIsClient] = useState(false)
 
-  // Fix hydration - only set mounted once
   useEffect(() => {
-    setMounted(true)
+    setIsClient(true)
   }, [])
 
-  // Load markets - only when mounted and connected
   useEffect(() => {
-    if (!mounted) return
+    // Only load markets on client side after hydration
+    if (!isClient) return
     
     if (isConnected && PREDICTION_MARKET_ADDRESS) {
       loadMarkets()
     } else {
       setLoading(false)
     }
-  }, [mounted, isConnected])
+  }, [isClient, isConnected])
 
   const loadMarkets = async () => {
     try {
@@ -85,11 +88,6 @@ export default function Home() {
     }
   }
 
-  // Don't render until mounted to avoid hydration mismatch
-  if (!mounted) {
-    return null
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
       {/* Animated background elements */}
@@ -100,7 +98,7 @@ export default function Home() {
       </div>
 
       <div className="relative z-10">
-        {/* Navigation */}
+        {/* Navigation - Always render with visibility control */}
         <nav className="container mx-auto px-4 py-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
@@ -114,23 +112,32 @@ export default function Home() {
             </div>
 
             <div className="flex gap-3 items-center">
-              {isConnected && (
-                <Link href="/create">
-                  <Button variant="secondary" size="md">
-                    + Create Market
+              {/* HYDRATION FIX: Always render, use opacity to hide during SSR */}
+              <div 
+                style={{ 
+                  visibility: isClient ? 'visible' : 'hidden',
+                  opacity: isClient ? 1 : 0,
+                  transition: 'opacity 0.2s'
+                }}
+              >
+                {isConnected && (
+                  <Link href="/create">
+                    <Button variant="secondary" size="md">
+                      + Create Market
+                    </Button>
+                  </Link>
+                )}
+                {!isConnected ? (
+                  <Button onClick={() => open()} variant="primary" size="md">
+                    Connect Wallet
                   </Button>
-                </Link>
-              )}
-              {!isConnected ? (
-                <Button onClick={() => open()} variant="primary" size="md">
-                  Connect Wallet
-                </Button>
-              ) : (
-                <div className="px-4 py-2 bg-white/10 backdrop-blur-lg rounded-lg border border-white/20">
-                  <p className="text-xs text-purple-300">Connected</p>
-                  <p className="text-sm text-white font-mono">{address?.slice(0, 6)}...{address?.slice(-4)}</p>
-                </div>
-              )}
+                ) : (
+                  <div className="px-4 py-2 bg-white/10 backdrop-blur-lg rounded-lg border border-white/20">
+                    <p className="text-xs text-purple-300">Connected</p>
+                    <p className="text-sm text-white font-mono">{address?.slice(0, 6)}...{address?.slice(-4)}</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </nav>
@@ -170,7 +177,16 @@ export default function Home() {
               </div>
             </div>
 
-            {!isConnected && (
+            {/* HYDRATION FIX: Use CSS visibility instead of conditional rendering */}
+            <div
+              style={{
+                visibility: isClient && !isConnected ? 'visible' : 'hidden',
+                opacity: isClient && !isConnected ? 1 : 0,
+                height: isClient && !isConnected ? 'auto' : 0,
+                overflow: 'hidden',
+                transition: 'opacity 0.2s, height 0.2s'
+              }}
+            >
               <Button 
                 onClick={() => open()} 
                 variant="primary" 
@@ -179,11 +195,11 @@ export default function Home() {
               >
                 🚀 Get Started - Connect Wallet
               </Button>
-            )}
+            </div>
           </div>
 
           {/* Main Content - Markets */}
-          {isConnected && (
+          {isClient && isConnected && (
             <div>
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-bold text-white">Active Markets</h3>
@@ -230,7 +246,7 @@ export default function Home() {
           )}
 
           {/* Features Section - Only show when not connected */}
-          {!isConnected && (
+          {isClient && !isConnected && (
             <div className="mt-20">
               <h3 className="text-3xl font-bold text-white text-center mb-12">Why PrediChain?</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
