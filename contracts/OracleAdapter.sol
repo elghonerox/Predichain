@@ -43,7 +43,9 @@ contract OracleAdapter is IOracleAdapter, Ownable {
     uint256 public constant MIN_TWAP_PERIOD = 3600; // 1 hour
     
     /// @notice Maximum number of historical prices to store per asset
-    uint256 public constant MAX_PRICE_HISTORY = 100;
+    /// SECURITY FIX C-2: Increased from 100 to 1000 to prevent TWAP manipulation
+    /// At 5-min intervals: 1000 points = 83 hours of price history
+    uint256 public constant MAX_PRICE_HISTORY = 1000;
     
     /// @notice Minimum time between price updates (prevents TWAP stuffing)
     uint256 public constant MIN_UPDATE_INTERVAL = 5 minutes;
@@ -252,7 +254,25 @@ contract OracleAdapter is IOracleAdapter, Ownable {
             for (uint256 i = 0; i < assets.length; i++) {
                 require(priceArray[i] > 0, "Invalid price in batch");
                 
-                // Update price (skip deviation check for batch efficiency)
+                // SECURITY FIX C-1: Add deviation check to prevent circuit breaker bypass
+                PriceData memory oldData = prices[assets[i]];
+                
+                if (oldData.isValid && oldData.price > 0) {
+                    uint256 deviation = _calculateDeviation(oldData.price, priceArray[i]);
+                    
+                    if (deviation > MAX_PRICE_DEVIATION) {
+                        circuitBreakerActive = true;
+                        emit CircuitBreakerTriggered(
+                            assets[i],
+                            oldData.price,
+                            priceArray[i],
+                            deviation
+                        );
+                        revert("Circuit breaker triggered in batch");
+                    }
+                }
+                
+                // Update price
                 prices[assets[i]] = PriceData({
                     price: priceArray[i],
                     timestamp: block.timestamp,

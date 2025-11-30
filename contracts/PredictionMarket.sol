@@ -57,6 +57,10 @@ contract PredictionMarket is
     
     /// @notice Minimum trade amount (prevents spam)
     uint256 public constant MIN_TRADE_AMOUNT = 0.01 ether;
+    
+    /// SECURITY FIX H-1: Public resolution delay (prevents front-running)
+    /// Creator and owner can resolve immediately, others must wait 1 hour
+    uint256 public constant PUBLIC_RESOLUTION_DELAY = 1 hours;
 
     // =============================================================
     //                           STORAGE
@@ -468,6 +472,16 @@ contract PredictionMarket is
         Market storage market = markets[marketId];
         require(market.status == 0, "Market not active"); // 0 = Active
         require(block.timestamp >= market.resolutionTime, "Not ready for resolution");
+        
+        // SECURITY FIX H-1: Access control to prevent front-running
+        // Creator or owner can resolve immediately
+        // Others must wait PUBLIC_RESOLUTION_DELAY (1 hour) after resolution time
+        if (msg.sender != market.creator && msg.sender != owner()) {
+            require(
+                block.timestamp >= market.resolutionTime + PUBLIC_RESOLUTION_DELAY,
+                "Public resolution window not open yet"
+            );
+        }
         
         // Get TWAP price from oracle (prevents flash loan manipulation)
         (uint256 twapPrice, uint256 timestamp) = oracleAdapter.getTWAPPrice(

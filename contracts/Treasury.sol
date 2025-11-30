@@ -45,6 +45,13 @@ contract Treasury is Ownable, ReentrancyGuard {
     /// @notice Total fees distributed (all time)
     uint256 public totalFeesDistributed;
     
+    /// @notice Total withdrawals processed (all time)
+    uint256 public totalWithdrawn;
+    
+    /// SECURITY FIX H-2: Track reserved amounts for pending withdrawals
+    /// Prevents fee distribution from consuming funds reserved for withdrawals
+    uint256 public reservedWithdrawalAmount;
+    
     /// @notice Protocol fee rate (80% = 80)
     uint256 public protocolFeeRate;
     
@@ -159,7 +166,10 @@ contract Treasury is Ownable, ReentrancyGuard {
     ) external onlyOwner nonReentrant {
         require(recipient != address(0), "Invalid recipient");
         require(amount > 0, "Amount must be positive");
-        require(address(this).balance >= amount, "Insufficient balance");
+        
+        // SECURITY FIX H-2: Check available balance (total - reserved)
+        uint256 availableBalance = address(this).balance - reservedWithdrawalAmount;
+        require(availableBalance >= amount, "Insufficient available balance (reserved for withdrawals)");
         
         unchecked {
             totalFeesDistributed += amount;
@@ -188,6 +198,8 @@ contract Treasury is Ownable, ReentrancyGuard {
     ) external onlyOwner returns (bytes32 requestId) {
         require(recipient != address(0), "Invalid recipient");
         require(amount > 0, "Amount must be positive");
+        
+        // SECURITY FIX H-2: Check total balance and update reserved amount
         require(address(this).balance >= amount, "Insufficient balance");
         
         // Generate unique request ID
@@ -202,6 +214,9 @@ contract Treasury is Ownable, ReentrancyGuard {
             requestTime: block.timestamp,
             executed: false
         });
+        
+        // SECURITY FIX H-2: Reserve the withdrawal amount
+        reservedWithdrawalAmount += amount;
         
         emit WithdrawalRequested(
             requestId,
@@ -240,7 +255,11 @@ contract Treasury is Ownable, ReentrancyGuard {
         
         unchecked {
             totalFeesDistributed += request.amount;
+            totalWithdrawn += request.amount;
         }
+        
+        // SECURITY FIX H-2: Release the reserved amount
+        reservedWithdrawalAmount -= request.amount;
         
         // Transfer funds
         (bool success, ) = request.recipient.call{value: request.amount}("");
@@ -264,13 +283,14 @@ contract Treasury is Ownable, ReentrancyGuard {
         require(request.requestTime > 0, "Request does not exist");
         require(!request.executed, "Already executed");
         
+        // SECURITY FIX H-2: Release the reserved amount when cancelled
+        reservedWithdrawalAmount -= request.amount;
+        
         // Delete request
         delete pendingWithdrawals[requestId];
         
         emit WithdrawalCancelled(requestId);
     }
-
-    // =============================================================
     //                       VIEW FUNCTIONS
     // =============================================================
     
