@@ -61,11 +61,11 @@ function validateAddress(address: string, fieldName: string): string {
   if (!address || address === '') {
     throw new Error(`${fieldName} is required but not configured`)
   }
-  
+
   if (!address.startsWith('0x') || address.length !== 42) {
     throw new Error(`${fieldName} is not a valid Ethereum address: ${address}`)
   }
-  
+
   return address
 }
 
@@ -73,7 +73,7 @@ function validateUrl(url: string, fieldName: string): string {
   if (!url || url === '') {
     throw new Error(`${fieldName} is required but not configured`)
   }
-  
+
   try {
     new URL(url)
     return url
@@ -87,11 +87,11 @@ function validateProjectId(projectId: string): string {
     console.warn('⚠️  WalletConnect Project ID not configured. Wallet connection may not work.')
     return '0893b6579e0a17ca509b1e6e231e8240' // Fallback
   }
-  
+
   if (projectId.length < 32) {
     console.warn('⚠️  WalletConnect Project ID looks invalid (too short)')
   }
-  
+
   return projectId
 }
 
@@ -102,11 +102,11 @@ function validateProjectId(projectId: string): string {
 function detectEnvironment(): Environment {
   const nodeEnv = process.env.NODE_ENV
   const customEnv = process.env.NEXT_PUBLIC_APP_ENV
-  
+
   if (customEnv) {
     return customEnv as Environment
   }
-  
+
   switch (nodeEnv) {
     case 'production':
       return Environment.Production
@@ -130,7 +130,7 @@ function getNetworkConfig(chainId: number): NetworkConfig {
         blockExplorer: 'http://localhost:8545',
         name: 'Hardhat Local',
       }
-    
+
     case ChainId.BSCTestnet:
       return {
         chainId: ChainId.BSCTestnet,
@@ -138,7 +138,7 @@ function getNetworkConfig(chainId: number): NetworkConfig {
         blockExplorer: 'https://testnet.bscscan.com',
         name: 'BNB Chain Testnet',
       }
-    
+
     case ChainId.BSCMainnet:
       return {
         chainId: ChainId.BSCMainnet,
@@ -146,7 +146,7 @@ function getNetworkConfig(chainId: number): NetworkConfig {
         blockExplorer: 'https://bscscan.com',
         name: 'BNB Chain Mainnet',
       }
-    
+
     default:
       throw new Error(`Unsupported chain ID: ${chainId}`)
   }
@@ -166,7 +166,7 @@ function getContractAddresses(env: Environment, chainId: ChainId): ContractAddre
       treasury: '0x0000000000000000000000000000000000000003',
     }
   }
-  
+
   // Test Environment
   if (env === Environment.Test) {
     return {
@@ -175,7 +175,7 @@ function getContractAddresses(env: Environment, chainId: ChainId): ContractAddre
       treasury: '0x0000000000000000000000000000000000000003',
     }
   }
-  
+
   // Development Environment (Local Hardhat)
   if (env === Environment.Development && chainId === ChainId.HardhatLocal) {
     // Try to load from deployment file
@@ -190,16 +190,16 @@ function getContractAddresses(env: Environment, chainId: ChainId): ContractAddre
       console.warn('⚠️  Could not load deployment file, using environment variables')
     }
   }
-  
+
   // From Environment Variables (Production/Staging)
   const envAddresses = {
     predictionMarket: process.env.NEXT_PUBLIC_PREDICTION_MARKET_ADDRESS || '',
     oracleAdapter: process.env.NEXT_PUBLIC_ORACLE_ADAPTER_ADDRESS || '',
     treasury: process.env.NEXT_PUBLIC_TREASURY_ADDRESS || '',
   }
-  
+
   // Validate addresses in non-test environments
-  if (env !== Environment.Test && !process.env.CI) {
+  if (!process.env.CI) {
     try {
       envAddresses.predictionMarket = validateAddress(
         envAddresses.predictionMarket,
@@ -210,7 +210,7 @@ function getContractAddresses(env: Environment, chainId: ChainId): ContractAddre
       throw error
     }
   }
-  
+
   return envAddresses as ContractAddresses
 }
 
@@ -220,14 +220,14 @@ function getContractAddresses(env: Environment, chainId: ChainId): ContractAddre
 
 function buildConfig(): AppConfig {
   const environment = detectEnvironment()
-  
+
   const chainId = parseInt(
     process.env.NEXT_PUBLIC_CHAIN_ID || String(ChainId.HardhatLocal)
   )
-  
+
   const network = getNetworkConfig(chainId)
   const contracts = getContractAddresses(environment, chainId)
-  
+
   const config: AppConfig = {
     environment,
     network,
@@ -246,7 +246,7 @@ function buildConfig(): AppConfig {
       timeout: 30000,
     },
   }
-  
+
   // Log configuration in development
   if (environment === Environment.Development) {
     console.log('📋 Application Configuration:', {
@@ -260,7 +260,7 @@ function buildConfig(): AppConfig {
       },
     })
   }
-  
+
   return config
 }
 
@@ -333,16 +333,16 @@ export class ConfigurationError extends Error {
 export function validateConfiguration(): boolean {
   try {
     const config = getConfig()
-    
+
     // Check critical fields
     if (!config.contracts.predictionMarket) {
       throw new ConfigurationError('PredictionMarket address not configured')
     }
-    
+
     if (!config.network.rpcUrl) {
       throw new ConfigurationError('RPC URL not configured')
     }
-    
+
     console.log('✅ Configuration validation passed')
     return true
   } catch (error) {
