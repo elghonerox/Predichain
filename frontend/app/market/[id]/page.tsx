@@ -77,11 +77,11 @@ export default function MarketPage({ params }: { params: Promise<{ id: string }>
   }
 
   if (loading) {
-    return <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center text-white">Loading...</div>
+    return <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>Loading...</div>
   }
 
   if (!market) {
-    return <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center text-white">Market not found</div>
+    return <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>Market not found</div>
   }
 
   const statusLabels = ['Active', 'Resolved', 'Cancelled']
@@ -89,9 +89,15 @@ export default function MarketPage({ params }: { params: Promise<{ id: string }>
   const badgeVariant = market.status === 0 ? 'success' : market.status === 1 ? 'info' : 'warning'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-      <div className="container mx-auto px-4 py-12">
-        <Link href="/" className="inline-flex items-center text-purple-300 hover:text-white mb-6 transition">
+    <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
+      {/* Subtle background gradient */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#6366f1] rounded-full mix-blend-multiply filter blur-[128px] opacity-10"></div>
+        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-[#06b6d4] rounded-full mix-blend-multiply filter blur-[128px] opacity-10"></div>
+      </div>
+
+      <div className="container mx-auto px-4 py-12 relative z-10">
+        <Link href="/" className="inline-flex items-center mb-6 transition hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
           <span className="mr-2">←</span> Back to Markets
         </Link>
 
@@ -106,39 +112,39 @@ export default function MarketPage({ params }: { params: Promise<{ id: string }>
                     LIVE
                   </span>
                 </div>
-                <span className="text-purple-300 text-sm">#{market.id.toString()}</span>
+                <span className="text-sm" style={{ color: 'var(--text-muted)' }}>#{market.id.toString()}</span>
               </div>
 
-              <h1 className="text-3xl font-bold text-white mb-6">{market.question}</h1>
+              <h1 className="text-3xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>{market.question}</h1>
 
               <div className="grid grid-cols-2 gap-6 mb-6">
-                <div className="bg-white/5 rounded-lg p-4">
-                  <p className="text-purple-300 text-sm mb-1">Target Price</p>
-                  <p className="text-xl font-bold text-white">${parseFloat(formatEther(market.targetPrice)).toLocaleString()}</p>
-                  <p className="text-xs text-purple-400 mt-1">{market.asset}</p>
+                <div className="rounded-lg p-4" style={{ background: 'var(--bg-secondary)' }}>
+                  <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Target Price</p>
+                  <p className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>${parseFloat(formatEther(market.targetPrice)).toLocaleString()}</p>
+                  <p className="text-xs mt-1 text-[#06b6d4]">{market.asset}</p>
                 </div>
-                <div className="bg-white/5 rounded-lg p-4">
-                  <p className="text-purple-300 text-sm mb-1">Resolution Date</p>
-                  <p className="text-xl font-bold text-white">
+                <div className="rounded-lg p-4" style={{ background: 'var(--bg-secondary)' }}>
+                  <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Resolution Date</p>
+                  <p className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
                     {new Date(Number(market.resolutionTime) * 1000).toLocaleDateString()}
                   </p>
-                  <p className="text-xs text-purple-400 mt-1">
+                  <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
                     {new Date(Number(market.resolutionTime) * 1000).toLocaleTimeString()}
                   </p>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">Volume</h3>
-                <div className="relative h-4 bg-white/10 rounded-full overflow-hidden">
+                <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Volume</h3>
+                <div className="relative h-4 rounded-full overflow-hidden" style={{ background: 'var(--bg-secondary)' }}>
                   <div
-                    className="absolute left-0 top-0 h-full bg-green-500"
+                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-[#10b981] to-[#06b6d4]"
                     style={{ width: `${Number(market.totalVolume) > 0 ? (Number(market.yesVolume) / Number(market.totalVolume)) * 100 : 50}%` }}
                   ></div>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-green-400 font-bold">YES: {parseFloat(formatEther(market.yesVolume)).toFixed(4)} BNB</span>
-                  <span className="text-red-400 font-bold">NO: {parseFloat(formatEther(market.noVolume)).toFixed(4)} BNB</span>
+                  <span className="text-[#10b981] font-bold">YES: {parseFloat(formatEther(market.yesVolume)).toFixed(4)} BNB</span>
+                  <span className="text-[#f43f5e] font-bold">NO: {parseFloat(formatEther(market.noVolume)).toFixed(4)} BNB</span>
                 </div>
               </div>
             </Card>
@@ -146,13 +152,13 @@ export default function MarketPage({ params }: { params: Promise<{ id: string }>
 
           <div className="lg:col-span-1">
             <Card>
-              <h2 className="text-xl font-bold text-white mb-6">Trade Position</h2>
+              <h2 className="text-xl font-bold mb-6" style={{ color: 'var(--text-primary)' }}>Trade Position</h2>
 
               {market.status !== 0 ? (
                 <Alert type="info" title="Market Closed" message="This market is no longer active for trading." />
               ) : !isConnected ? (
                 <div className="text-center py-8">
-                  <p className="text-purple-300 mb-4">Connect wallet to trade</p>
+                  <p className="mb-4" style={{ color: 'var(--text-secondary)' }}>Connect wallet to trade</p>
                 </div>
               ) : (
                 <form onSubmit={handleTrade} className="space-y-6">
@@ -161,9 +167,10 @@ export default function MarketPage({ params }: { params: Promise<{ id: string }>
                       type="button"
                       onClick={() => setSide(true)}
                       className={`p-4 rounded-lg border-2 transition ${side === true
-                          ? 'border-green-500 bg-green-500/20 text-white'
-                          : 'border-white/10 bg-white/5 text-purple-300 hover:bg-white/10'
+                        ? 'border-green-500 bg-green-500/20'
+                        : 'border-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.05)]'
                         }`}
+                      style={{ color: side === true ? '#fff' : 'var(--text-secondary)' }}
                     >
                       <span className="block text-lg font-bold">YES</span>
                       <span className="text-xs">Predict Higher</span>
@@ -172,9 +179,10 @@ export default function MarketPage({ params }: { params: Promise<{ id: string }>
                       type="button"
                       onClick={() => setSide(false)}
                       className={`p-4 rounded-lg border-2 transition ${side === false
-                          ? 'border-red-500 bg-red-500/20 text-white'
-                          : 'border-white/10 bg-white/5 text-purple-300 hover:bg-white/10'
+                        ? 'border-red-500 bg-red-500/20'
+                        : 'border-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.05)]'
                         }`}
+                      style={{ color: side === false ? '#fff' : 'var(--text-secondary)' }}
                     >
                       <span className="block text-lg font-bold">NO</span>
                       <span className="text-xs">Predict Lower</span>
